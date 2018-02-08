@@ -2,37 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>UIApplicationShortcutItems</key>
-    <array>
-        <dict>
-            <key>UIApplicationShortcutItemType</key>
-            <string>com.pss.first</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>标题</string>
-            <key>UIApplicationShortcutItemSubtitle</key>
-            <string>副标题</string>
-            <key>UIApplicationShortcutItemIconFile</key>
-            <string>image</string>
-            <key>UIApplicationShortcutItemUserInfo</key>
-            <dict>
-                <key>scheme</key>
-                <string>devzeng://home</string>
-            </dict>
-        </dict>
-        <dict>
-            <key>UIApplicationShortcutItemType</key>
-            <string>com.pss.second</string>
-            <key>UIApplicationShortcutItemTitle</key>
-            <string>只有标题</string>
-            <key>UIApplicationShortcutItemIconFile</key>
-            <string>image</string>
-            <key>UIApplicationShortcutItemUserInfo</key>
-            <dict>
-                <key>scheme</key>
-                <string>devzeng://about</string>
-            </dict>
-        </dict>
-    </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
