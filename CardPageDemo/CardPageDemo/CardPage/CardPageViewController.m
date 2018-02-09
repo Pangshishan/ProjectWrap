@@ -9,6 +9,12 @@
 #import "CardPageViewController.h"
 #import "ItemViewController.h"
 
+typedef enum : NSUInteger {
+    PageDirectionNoChange,
+    PageDirectionLast,
+    PageDirectionNext,
+} PageDirectionType;
+
 @interface CardPageViewController () <UIScrollViewDelegate>
 
 @property (nonatomic, assign) CGPoint startPoint;
@@ -26,6 +32,7 @@
 
 // 位置属性
 @property (nonatomic, assign) CGFloat edgeW;
+@property (nonatomic, assign) CGFloat minY;
 @property (nonatomic, assign) CGFloat varHei;
 @property (nonatomic, assign) CGFloat margin;
 @property (nonatomic, assign) CGFloat minWid;
@@ -82,12 +89,13 @@
     self.minHei = minHei;
     self.margin = margin;
     self.varHei = varHei;
+    self.minY = y;
     
     
-    self.count = 5;
+    self.count = 7;
     NSInteger count = self.count > 2 ? 3 : self.count;
     
-    scrollV.contentSize = CGSizeMake(edgeW * 2 + count * minWid + (count - 1) * margin, self.view.bounds.size.height);
+    scrollV.contentSize = CGSizeMake(edgeW * 2 + self.count * minWid + (self.count - 1) * margin, self.view.bounds.size.height);
     scrollV.showsVerticalScrollIndicator = NO;
 
     self.itemVCArray = [NSMutableArray array];
@@ -157,29 +165,69 @@
 }
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    NSLog(@"%.2lf - %.2lf - %.2lf", scrollView.contentOffset.x, velocity.x, (*targetContentOffset).x);
-    
     CGPoint targetOffset = *targetContentOffset;
     CGFloat targetX = targetOffset.x;
-    
+
     CGFloat now_X = self.pageIndex * (_minWid + _margin); // 当前页x坐标
     CGFloat lastX = (self.pageIndex - 1) * (_minWid + _margin);
     CGFloat nextX = (self.pageIndex + 1) * (_minWid + _margin);
     
+    PageDirectionType directionType;
+    
     if (targetX < (lastX + self.view.bounds.size.width / 2)) { // 上一页
-        (*targetContentOffset).x = lastX;
-//        [scrollView setContentOffset:CGPointMake(lastX, targetOffset.y) animated:YES];
+        [scrollView setContentOffset:CGPointMake(lastX, targetOffset.y) animated:YES];
         self.pageIndex--;
+        directionType = PageDirectionLast;
     } else if (targetX > (nextX - self.view.bounds.size.width / 2)) { // 下一页
-        (*targetContentOffset).x = nextX;
-//        [scrollView setContentOffset:CGPointMake(nextX, targetOffset.y) animated:YES];
+        [scrollView setContentOffset:CGPointMake(nextX, targetOffset.y) animated:YES];
         self.pageIndex++;
+        directionType = PageDirectionNext;
     } else {
-        (*targetContentOffset).x = now_X;
-//        [scrollView setContentOffset:CGPointMake(now_X, targetOffset.y) animated:YES];
+        [scrollView setContentOffset:CGPointMake(now_X, targetOffset.y) animated:YES];
+        directionType = PageDirectionNoChange;
     }
-//    (*targetContentOffset).x = scrollView.contentOffset.x;
+    (*targetContentOffset).x = scrollView.contentOffset.x;
+    NSLog(@"第 %ld 页", self.pageIndex);
+    if (directionType == PageDirectionNext) {
+        if (self.pageIndex == 1 || self.pageIndex == self.count - 1) {
+            return;
+        }
+        ItemViewController *vc = self.itemVCArray[[self farthestIndexWithLeft:YES]];
+        vc.view.frame = CGRectMake(self.edgeW + (self.pageIndex + 1) * (self.minWid + self.margin), self.minY, self.minWid, self.minHei);
+        [vc reloadWithData:nil index:self.pageIndex + 1];
+    } else if (directionType == PageDirectionLast) {
+        if (self.pageIndex == self.count - 2 || self.pageIndex == 0) {
+            return;
+        }
+        ItemViewController *vc = self.itemVCArray[[self farthestIndexWithLeft:NO]];
+        vc.view.frame = CGRectMake(self.edgeW + (self.pageIndex - 1) * (self.minWid + self.margin), self.minY, self.minWid, self.minHei);
+        [vc reloadWithData:nil index:self.pageIndex - 1];
+    }
 }
+- (NSInteger)farthestIndexWithLeft:(BOOL)isLeft
+{
+    CGRect markFrame = ((UIViewController *)self.itemVCArray.firstObject).view.frame;
+    NSInteger index = 0;
+    for (int i = 0; i < self.itemVCArray.count; i++) {
+        CGRect indexFrame = ((UIViewController *)self.itemVCArray[i]).view.frame;
+        BOOL condition = (isLeft ? (indexFrame.origin.x < markFrame.origin.x) : (indexFrame.origin.x > markFrame.origin.x));
+        if (condition) {
+            markFrame = indexFrame;
+            index = i;
+        }
+    }
+    return index;
+}
+//- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+//{
+//    NSLog(@"第 %ld 页", self.pageIndex);
+//    if (self.pageIndex == 0 || self.pageIndex == self.count - 1) {
+//        return;
+//    }
+//
+//}
+
+
 
 #pragma mark - privite func
 
