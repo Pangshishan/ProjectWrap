@@ -21,12 +21,11 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 
-// scrollView停留的页数(选中的vc的下标)
 @property (nonatomic, assign) NSInteger pageIndex;
 @property (nonatomic, strong) NSMutableArray *itemVCArray;
 
-// 展示第几个数据
-@property (nonatomic, assign) NSInteger dataIndex;
+@property (nonatomic, assign) BOOL isUpDrag;
+@property (nonatomic, assign) BOOL havingSetDrag;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 
@@ -130,11 +129,37 @@ typedef enum : NSUInteger {
         self.startPoint = [panGes locationInView:self.view];
     } else if (panGes.state == UIGestureRecognizerStateChanged) {
         CGPoint point = [panGes locationInView:self.view];
+        if (!self.havingSetDrag) {
+            self.isUpDrag = (point.y < self.startPoint.y);
+            self.havingSetDrag = YES;
+        }
+        if (self.isUpDrag) {
+            
+        } else {
+            [self popGesture:panGes];
+        }
+    } else if (panGes.state == UIGestureRecognizerStateEnded) {
+        self.havingSetDrag = NO;
+        if (self.isUpDrag) {
+            
+        } else {
+            [self popGesture:panGes];
+        }
+    }
+}
+
+#pragma mark - frame changing
+// 向下滑动, 触发退出部分手势时
+- (void)popGesture:(UIGestureRecognizer *)panGes
+{
+    if (panGes.state == UIGestureRecognizerStateChanged) {
+        CGPoint point = [panGes locationInView:self.view];
         if (self.view.frame.origin.y + point.y - self.startPoint.y < self.startFrame.origin.y) {
             return;
         }
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + point.y - self.startPoint.y, self.view.bounds.size.width, self.view.bounds.size.height);
     } else if (panGes.state == UIGestureRecognizerStateEnded) {
+        self.havingSetDrag = NO;
         if (self.view.frame.origin.y - self.startFrame.origin.y > 100) {
             [UIView animateWithDuration:0.3 animations:^{
                 self.view.frame = CGRectMake(self.startFrame.origin.x, self.startFrame.origin.y + self.startFrame.size.height, self.view.bounds.size.width, self.view.bounds.size.height);
