@@ -7,10 +7,13 @@
 //
 
 #import "ItemViewController.h"
+#import <Masonry.h>
 
 @interface ItemViewController () <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UILabel *label;
+
+@property (nonatomic, assign) BOOL isTop;
 
 @end
 
@@ -18,9 +21,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.clipsToBounds = YES;
+    self.isTop = YES;
     [self addTableView];
     
+    if ([self.delegate respondsToSelector:@selector(itemVC:didChangeState:)]) {
+        [self.delegate itemVC:self didChangeState:YES];
+    }
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
     [self.tableView addSubview:label];
@@ -33,7 +41,12 @@
 
 - (void)reloadWithData:(NSDictionary *)data index:(NSInteger)index
 {
+    self.index = index;
     self.label.text = [NSString stringWithFormat:@"%ld", index];
+}
+- (void)frameChanged
+{
+    //self.tableView.frame = self.view.bounds;
 }
 
 - (void)addTableView
@@ -44,11 +57,19 @@
     [self.view addSubview:tableView];
     self.tableView = tableView;
     tableView.backgroundColor = [UIColor whiteColor];
+    
+    [tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(self.view);
+    }];
 }
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    self.tableView.frame = self.view.bounds;
+}
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    self.tableView.contentOffset = CGPointMake(0, 0);
 }
 #pragma mark - tableView代理方法
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -85,6 +106,26 @@
 {
     return 0.1;
 }
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if ([self.delegate respondsToSelector:@selector(itemVC:didChangeState:)]) {
+        if (scrollView.contentOffset.y > 0) {
+            if (self.isTop) {
+                self.isTop = NO;
+                [self.delegate itemVC:self didChangeState:NO];
+            }
+        } else {
+            if (!self.isTop) {
+                self.isTop = YES;
+                [self.delegate itemVC:self didChangeState:YES];
+            }
+        }
+    }
+    if (scrollView.contentOffset.y < 0) {
+        scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, 0);
+    }
+}
+
 
 
 

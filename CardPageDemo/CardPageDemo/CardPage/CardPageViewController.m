@@ -8,6 +8,7 @@
 
 #import "CardPageViewController.h"
 #import "ItemViewController.h"
+#import "CardPageVCView.h"
 
 typedef enum : NSUInteger {
     PageDirectionNoChange,
@@ -15,7 +16,18 @@ typedef enum : NSUInteger {
     PageDirectionNext,
 } PageDirectionType;
 
-@interface CardPageViewController () <UIScrollViewDelegate>
+typedef enum : NSUInteger {
+    DraggingDirectionUp,
+    DraggingDirectionDown,
+    DraggingDirectionLeftAndRight,
+} DraggingDirection;
+
+typedef enum : NSUInteger {
+    CardStateNormal,
+    CardStateFullScreen,
+} CardState;
+
+@interface CardPageViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, CardPageVCHitDelegate, ItemViewControllerProtocol>
 
 @property (nonatomic, assign) CGPoint startPoint;
 
@@ -24,10 +36,14 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) NSInteger pageIndex;
 @property (nonatomic, strong) NSMutableArray *itemVCArray;
 
-@property (nonatomic, assign) BOOL isUpDrag;
+@property (nonatomic, assign) DraggingDirection dragDirection;
 @property (nonatomic, assign) BOOL havingSetDrag;
 
+@property (nonatomic, assign) CardState cardState;
+
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+
+@property (nonatomic, assign) CGFloat panHeight;
 
 // 位置属性
 @property (nonatomic, assign) CGFloat edgeW;
@@ -40,26 +56,47 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) NSInteger count;
 
+@property (nonatomic, strong) UITouch *panTouch;
+@property (nonatomic, assign) BOOL isTop;
+
 
 @end
 
 @implementation CardPageViewController
+
+- (void)loadView
+{
+    [super loadView];
+    CardPageVCView *cardView = [[CardPageVCView alloc] initWithFrame:self.view.frame];
+    cardView.delegate = self;
+    self.view = cardView;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     
-    UIPanGestureRecognizer *panGes = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
-    [self.view addGestureRecognizer:panGes];
-    self.panGesture = panGes;
-    
+    [self setupPanGesture];
     [self addScrollView];
     [self setPanGesturePrior];
 }
 - (void)dealloc
 {
     NSLog(@"注销了");
+}
+- (void)setupPanGesture
+{
+    if (self.panGesture) {
+        // [self.panGesture removeTarget:self action:@selector(panGesture)];
+        [self.view removeGestureRecognizer:self.panGesture];
+        self.panGesture = nil;
+    }
+    UIPanGestureRecognizer *panGes = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+    [self.view addGestureRecognizer:panGes];
+    panGes.delegate = self;
+    panGes.delaysTouchesEnded = NO;
+    self.panGesture = panGes;
 }
 - (void)addScrollView
 {
@@ -80,7 +117,7 @@ typedef enum : NSUInteger {
     CGFloat margin = 20; // 卡片间距
     CGFloat x = edgeW;
     CGFloat y = 64;
-    CGFloat varHei = 64 - minScale * screenHei / 2;
+    CGFloat varHei = 64 - (screenHei - minScale * screenHei) / 2;
     
     self.edgeW = edgeW;
     self.minWid = minWid;
@@ -100,6 +137,7 @@ typedef enum : NSUInteger {
     self.itemVCArray = [NSMutableArray array];
     for (int i = 0; i < count; i++) {
         ItemViewController *itemVC = [[ItemViewController alloc] init];
+        itemVC.delegate = self;
         [self addChildViewController:itemVC];
         [scrollV addSubview:itemVC.view];
         itemVC.view.frame = CGRectMake(x + i * (minWid + margin), y, minWid, minHei);
@@ -108,6 +146,7 @@ typedef enum : NSUInteger {
     }
     
 }
+// 设置手势优先级 缩放优先
 - (void)setPanGesturePrior
 {
     for (int i = 0; i < self.itemVCArray.count; i++) {
@@ -115,6 +154,7 @@ typedef enum : NSUInteger {
         [itemVC.tableView.panGestureRecognizer requireGestureRecognizerToFail:self.panGesture];
     }
 }
+// tableView 优先
 - (void)setItemsVCPrior
 {
     for (int i = 0; i < self.itemVCArray.count; i++) {
@@ -122,33 +162,62 @@ typedef enum : NSUInteger {
         [self.panGesture requireGestureRecognizerToFail:itemVC.tableView.panGestureRecognizer];
     }
 }
-
+#pragma mark - Gesture
 - (void)panGesture:(UIPanGestureRecognizer *)panGes
 {
+    
     if (panGes.state == UIGestureRecognizerStateBegan) {
         self.startPoint = [panGes locationInView:self.view];
     } else if (panGes.state == UIGestureRecognizerStateChanged) {
         CGPoint point = [panGes locationInView:self.view];
         if (!self.havingSetDrag) {
-            self.isUpDrag = (point.y < self.startPoint.y);
+            CGFloat x_change = point.x - self.startPoint.x;
+            CGFloat y_change = point.y - self.startPoint.y;
+            if (ABS(y_change) > ABS(x_change)) {
+                // 竖直滑动
+                if (y_change > 0) {
+                    self.dragDirection = DraggingDirectionDown;
+                } else {
+                    self.dragDirection = DraggingDirectionUp;
+                }
+            } else {
+                // 水平滑动
+                self.dragDirection = DraggingDirectionLeftAndRight;
+            }
             self.havingSetDrag = YES;
         }
-        if (self.isUpDrag) {
-            
+        if (self.cardState == CardStateFullScreen) {
+            if (self.dragDirection == DraggingDirectionDown) {
+//                ItemViewController *itemVC = [self vcWithCurrentIndex];
+//                itemVC.tableView.conten
+                [self downGesture:panGes];
+            } else if (self.dragDirection == DraggingDirectionUp) {
+                //panGes.enabled = NO;
+                //[panGes setValue:@(UIGestureRecognizerStateFailed) forKey:@"state"];
+            }
         } else {
-            [self popGesture:panGes];
+            if (self.dragDirection == DraggingDirectionUp) {
+                [self topGesture:panGes];
+            } else if (self.dragDirection == DraggingDirectionDown) {
+                [self popGesture:panGes];
+            }
         }
-    } else if (panGes.state == UIGestureRecognizerStateEnded) {
+    } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
         self.havingSetDrag = NO;
-        if (self.isUpDrag) {
-            
+        //panGes.enabled = YES;
+        if (self.cardState == CardStateFullScreen) {
+            if (self.dragDirection == DraggingDirectionDown) {
+                [self downGesture:panGes];
+            }
         } else {
-            [self popGesture:panGes];
+            if (self.dragDirection == DraggingDirectionUp) {
+                [self topGesture:panGes];
+            } else if (self.dragDirection == DraggingDirectionDown) {
+                [self popGesture:panGes];
+            }
         }
     }
 }
-
-#pragma mark - frame changing
 // 向下滑动, 触发退出部分手势时
 - (void)popGesture:(UIGestureRecognizer *)panGes
 {
@@ -158,8 +227,7 @@ typedef enum : NSUInteger {
             return;
         }
         self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y + point.y - self.startPoint.y, self.view.bounds.size.width, self.view.bounds.size.height);
-    } else if (panGes.state == UIGestureRecognizerStateEnded) {
-        self.havingSetDrag = NO;
+    } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
         if (self.view.frame.origin.y - self.startFrame.origin.y > 100) {
             [UIView animateWithDuration:0.3 animations:^{
                 self.view.frame = CGRectMake(self.startFrame.origin.x, self.startFrame.origin.y + self.startFrame.size.height, self.view.bounds.size.width, self.view.bounds.size.height);
@@ -178,7 +246,137 @@ typedef enum : NSUInteger {
         }
     }
 }
+// 向上滑动放大
+- (void)topGesture:(UIGestureRecognizer *)panGes
+{
+    if (panGes.state == UIGestureRecognizerStateChanged) {
+        CGPoint point = [panGes locationInView:self.view];
+        if (point.y > self.startPoint.y) { // 超出底部
+            self.panHeight = 0;
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+            self.cardState = CardStateNormal;
+        } else if (point.y < self.startPoint.y - self.varHei) { // 超出顶部
+            self.panHeight = self.varHei;
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+            self.cardState = CardStateFullScreen;
+        } else { // 正常缩放
+            self.panHeight = self.startPoint.y - point.y;
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+        }
+    } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
+        panGes.enabled = YES;
+        ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+        itemVC.tableView.contentOffset = CGPointMake(0, 0);
+        if (self.panHeight > self.varHei / 2) {
+            [UIView animateWithDuration:0.1 animations:^{
+                itemVC.view.frame = [self maxFrameWithCurrentIndex];
+            } completion:^(BOOL finished) {
+                self.cardState = CardStateFullScreen;
+            }];
+        } else {
+            [UIView animateWithDuration:0.1 animations:^{
+                itemVC.view.frame = [self minFrameWithCurrentIndex];
+            } completion:^(BOOL finished) {
+                self.cardState = CardStateNormal;
+            }];
+        }
+    }
+}
+// 向下滑动缩小
+- (void)downGesture:(UIGestureRecognizer *)panGes
+{
+    if (panGes.state == UIGestureRecognizerStateChanged) {
+        CGPoint point = [panGes locationInView:self.view];
+        if (point.y < self.startPoint.y) { // 超出顶部
+            self.panHeight = self.varHei;
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+            self.cardState = CardStateFullScreen;
+        } else if (point.y > self.startPoint.y + self.varHei) { // 超出底部
+            self.panHeight = 0;
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+            self.cardState = CardStateNormal;
+        } else { // 正常缩放
+            self.panHeight = self.varHei - (point.y - self.startPoint.y);
+            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            itemVC.view.frame = [self frameInDragging];
+        }
+    } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
+        panGes.enabled = YES;
+        ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+        itemVC.tableView.contentOffset = CGPointMake(0, 0);
+        if (self.panHeight > self.varHei / 2) {
+            [UIView animateWithDuration:0.1 animations:^{
+                itemVC.view.frame = [self maxFrameWithCurrentIndex];
+            } completion:^(BOOL finished) {
+                self.cardState = CardStateFullScreen;
+            }];
+        } else {
+            [UIView animateWithDuration:0.1 animations:^{
+                itemVC.view.frame = [self minFrameWithCurrentIndex];
+            } completion:^(BOOL finished) {
+                self.cardState = CardStateNormal;
+            }];
+        }
+    }
+}
 
+#pragma mark - Gesture Delegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    NSLog(@"shouldReceiveTouch");
+    if (gestureRecognizer == self.panGesture) {
+        if (self.cardState == CardStateFullScreen) {
+            self.panTouch = touch;
+            //return NO;
+        }
+    }
+    return YES;
+}
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    NSLog(@"ShouldBegin");
+    if (gestureRecognizer == self.panGesture) {
+        if (self.cardState == CardStateFullScreen) {
+            if (!self.isTop) {
+                return NO;
+            }
+            CGPoint point1 = [self.panTouch previousLocationInView:self.view];
+            CGPoint point2 = [self.panTouch locationInView:self.view];
+            if (point2.y - point1.y < 0) {
+                return NO;
+            }
+            
+        }
+    }
+    return YES;
+}
+
+#pragma mark - ItemViewController Delegate
+- (void)itemVC:(ItemViewController *)itemVC didChangeState:(BOOL)isTop
+{
+    NSLog(@"%d", isTop);
+    self.isTop = isTop;
+}
+#pragma mark - CardPageHit Delegate
+- (BOOL)needRewriteHitTest
+{
+//    if (self.cardState == CardStateFullScreen) {
+//        return NO;
+//    }
+//    return YES;
+    return NO;
+}
+- (UIView *)view_hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return nil;
+}
+
+#pragma mark - frame changing
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     
@@ -186,7 +384,7 @@ typedef enum : NSUInteger {
 #pragma mark - scrollView Delegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    
+    //NSLog(@"%lf", scrollView.decelerationRate);
 }
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
@@ -228,7 +426,11 @@ typedef enum : NSUInteger {
         vc.view.frame = CGRectMake(self.edgeW + (self.pageIndex - 1) * (self.minWid + self.margin), self.minY, self.minWid, self.minHei);
         [vc reloadWithData:nil index:self.pageIndex - 1];
     }
+    // 当前页放在最前面
+    UIViewController *currentVC = [self vcWithCurrentIndex];
+    [self.scrollView bringSubviewToFront:currentVC.view];
 }
+#pragma mark - private
 - (NSInteger)farthestIndexWithLeft:(BOOL)isLeft
 {
     CGRect markFrame = ((UIViewController *)self.itemVCArray.firstObject).view.frame;
@@ -243,14 +445,58 @@ typedef enum : NSUInteger {
     }
     return index;
 }
-//- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-//{
-//    NSLog(@"第 %ld 页", self.pageIndex);
-//    if (self.pageIndex == 0 || self.pageIndex == self.count - 1) {
-//        return;
-//    }
-//
-//}
+- (CGRect)frameInDragging
+{
+    CGFloat maxW = self.view.bounds.size.width;
+    CGFloat maxH = self.view.bounds.size.height;
+    CGFloat scale = (1 - self.minScale) * self.panHeight / self.varHei + self.minScale;
+    CGRect minFrame = [self minFrameWithCurrentIndex];
+    CGFloat x_changed = (scale * maxW - minFrame.size.width) / 2;
+    CGFloat y_changed = self.panHeight + (scale * maxH - minFrame.size.height) / 2;
+    CGFloat x_final = minFrame.origin.x - x_changed;
+    CGFloat y_final = minFrame.origin.y - y_changed;
+    CGFloat w_final = scale * maxW;
+    CGFloat h_final = scale * maxH;
+    return CGRectMake(x_final, y_final, w_final, h_final);
+}
+- (CGRect)minFrameWithCurrentIndex
+{
+    return CGRectMake(_edgeW + self.pageIndex * (_minWid + _margin), _minY, _minWid, _minHei);
+}
+- (CGRect)maxFrameWithCurrentIndex
+{
+    return CGRectMake(self.scrollView.contentOffset.x, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+}
+- (UIViewController *)vcWithCurrentIndex
+{
+    for (int i = 0 ; i < self.itemVCArray.count; i++) {
+        ItemViewController *itemVC = self.itemVCArray[i];
+        if (itemVC.index == self.pageIndex) {
+            return itemVC;
+        }
+    }
+    return nil;
+}
+- (void)setCardState:(CardState)cardState
+{
+    _cardState = cardState;
+    switch (cardState) {
+        case CardStateNormal: {
+            self.scrollView.scrollEnabled = YES;
+//            [self setupPanGesture];
+//            [self setPanGesturePrior];
+            break;
+        }
+        case CardStateFullScreen: {
+            self.scrollView.scrollEnabled = NO;
+//            [self setupPanGesture];
+//            [self setItemsVCPrior];
+            break;
+        }
+        default:
+            break;
+    }
+}
 
 
 

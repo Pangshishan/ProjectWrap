@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		625C5802DD2C2E2A49E90F56 /* libPods-CardPageDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB40DEEA02D409D0145B22E2 /* libPods-CardPageDemo.a */; };
+		B60F6B4220316CB20068992D /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = B60F6B4120316CB20068992D /* TestView.m */; };
+		B60F6B4520316DA80068992D /* CardPageVCView.m in Sources */ = {isa = PBXBuildFile; fileRef = B60F6B4420316DA80068992D /* CardPageVCView.m */; };
 		B6E47B37202A93BC00125459 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B36202A93BC00125459 /* AppDelegate.m */; };
 		B6E47B3A202A93BC00125459 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B39202A93BC00125459 /* ViewController.m */; };
 		B6E47B3D202A93BC00125459 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6E47B3B202A93BC00125459 /* Main.storyboard */; };
@@ -37,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B60F6B4020316CB20068992D /* TestView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestView.h; sourceTree = "<group>"; };
+		B60F6B4120316CB20068992D /* TestView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
+		B60F6B4320316DA80068992D /* CardPageVCView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardPageVCView.h; sourceTree = "<group>"; };
+		B60F6B4420316DA80068992D /* CardPageVCView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardPageVCView.m; sourceTree = "<group>"; };
 		B6E47B32202A93BC00125459 /* CardPageDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardPageDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6E47B35202A93BC00125459 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B6E47B36202A93BC00125459 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -57,6 +64,9 @@
 		B6E47B69202A948000125459 /* CardPageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardPageViewController.m; sourceTree = "<group>"; };
 		B6E47B6B202A9AE600125459 /* ItemViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemViewController.h; sourceTree = "<group>"; };
 		B6E47B6C202A9AE600125459 /* ItemViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemViewController.m; sourceTree = "<group>"; };
+		BB40DEEA02D409D0145B22E2 /* libPods-CardPageDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CardPageDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1928EE6233F8F021798B46D /* Pods-CardPageDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardPageDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo.release.xcconfig"; sourceTree = "<group>"; };
+		F4164675EDA63E1D13F2D6EB /* Pods-CardPageDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardPageDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				625C5802DD2C2E2A49E90F56 /* libPods-CardPageDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +95,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		082F884E22E480B102CE87AD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F4164675EDA63E1D13F2D6EB /* Pods-CardPageDemo.debug.xcconfig */,
+				C1928EE6233F8F021798B46D /* Pods-CardPageDemo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		5B6DD5150984673D1EFE6D5C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BB40DEEA02D409D0145B22E2 /* libPods-CardPageDemo.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B6E47B29202A93BC00125459 = {
 			isa = PBXGroup;
 			children = (
@@ -91,6 +119,8 @@
 				B6E47B4D202A93BD00125459 /* CardPageDemoTests */,
 				B6E47B58202A93BD00125459 /* CardPageDemoUITests */,
 				B6E47B33202A93BC00125459 /* Products */,
+				082F884E22E480B102CE87AD /* Pods */,
+				5B6DD5150984673D1EFE6D5C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +141,8 @@
 				B6E47B36202A93BC00125459 /* AppDelegate.m */,
 				B6E47B38202A93BC00125459 /* ViewController.h */,
 				B6E47B39202A93BC00125459 /* ViewController.m */,
+				B60F6B4020316CB20068992D /* TestView.h */,
+				B60F6B4120316CB20068992D /* TestView.m */,
 				B6E47B67202A93E600125459 /* CardPage */,
 				B6E47B3B202A93BC00125459 /* Main.storyboard */,
 				B6E47B3E202A93BC00125459 /* Assets.xcassets */,
@@ -144,6 +176,8 @@
 			children = (
 				B6E47B68202A948000125459 /* CardPageViewController.h */,
 				B6E47B69202A948000125459 /* CardPageViewController.m */,
+				B60F6B4320316DA80068992D /* CardPageVCView.h */,
+				B60F6B4420316DA80068992D /* CardPageVCView.m */,
 				B6E47B6B202A9AE600125459 /* ItemViewController.h */,
 				B6E47B6C202A9AE600125459 /* ItemViewController.m */,
 			);
@@ -157,9 +191,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B6E47B5E202A93BD00125459 /* Build configuration list for PBXNativeTarget "CardPageDemo" */;
 			buildPhases = (
+				504211743384922B7D1B0E09 /* [CP] Check Pods Manifest.lock */,
 				B6E47B2E202A93BC00125459 /* Sources */,
 				B6E47B2F202A93BC00125459 /* Frameworks */,
 				B6E47B30202A93BC00125459 /* Resources */,
+				A37081AB0820AD3417214A0A /* [CP] Embed Pods Frameworks */,
+				FE7D54F6A6D1E7B3D82B8EB6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -278,6 +315,57 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		504211743384922B7D1B0E09 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CardPageDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A37081AB0820AD3417214A0A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FE7D54F6A6D1E7B3D82B8EB6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B6E47B2E202A93BC00125459 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -285,8 +373,10 @@
 			files = (
 				B6E47B3A202A93BC00125459 /* ViewController.m in Sources */,
 				B6E47B6A202A948000125459 /* CardPageViewController.m in Sources */,
+				B60F6B4520316DA80068992D /* CardPageVCView.m in Sources */,
 				B6E47B6D202A9AE600125459 /* ItemViewController.m in Sources */,
 				B6E47B45202A93BC00125459 /* main.m in Sources */,
+				B60F6B4220316CB20068992D /* TestView.m in Sources */,
 				B6E47B37202A93BC00125459 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -448,6 +538,7 @@
 		};
 		B6E47B5F202A93BD00125459 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4164675EDA63E1D13F2D6EB /* Pods-CardPageDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -463,6 +554,7 @@
 		};
 		B6E47B60202A93BD00125459 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C1928EE6233F8F021798B46D /* Pods-CardPageDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
