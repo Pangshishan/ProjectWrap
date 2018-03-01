@@ -10,6 +10,7 @@
 		625C5802DD2C2E2A49E90F56 /* libPods-CardPageDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB40DEEA02D409D0145B22E2 /* libPods-CardPageDemo.a */; };
 		B60F6B4220316CB20068992D /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = B60F6B4120316CB20068992D /* TestView.m */; };
 		B60F6B4520316DA80068992D /* CardPageVCView.m in Sources */ = {isa = PBXBuildFile; fileRef = B60F6B4420316DA80068992D /* CardPageVCView.m */; };
+		B60F6B48203E572C0068992D /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B60F6B47203E572C0068992D /* TestViewController.m */; };
 		B6E47B37202A93BC00125459 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B36202A93BC00125459 /* AppDelegate.m */; };
 		B6E47B3A202A93BC00125459 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B39202A93BC00125459 /* ViewController.m */; };
 		B6E47B3D202A93BC00125459 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6E47B3B202A93BC00125459 /* Main.storyboard */; };
@@ -19,7 +20,7 @@
 		B6E47B4F202A93BD00125459 /* CardPageDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B4E202A93BD00125459 /* CardPageDemoTests.m */; };
 		B6E47B5A202A93BD00125459 /* CardPageDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B59202A93BD00125459 /* CardPageDemoUITests.m */; };
 		B6E47B6A202A948000125459 /* CardPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B69202A948000125459 /* CardPageViewController.m */; };
-		B6E47B6D202A9AE600125459 /* ItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B6C202A9AE600125459 /* ItemViewController.m */; };
+		B6E47B6D202A9AE600125459 /* CardPageItemVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B6E47B6C202A9AE600125459 /* CardPageItemVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,9 @@
 		B60F6B4120316CB20068992D /* TestView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
 		B60F6B4320316DA80068992D /* CardPageVCView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardPageVCView.h; sourceTree = "<group>"; };
 		B60F6B4420316DA80068992D /* CardPageVCView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardPageVCView.m; sourceTree = "<group>"; };
+		B60F6B46203E572C0068992D /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		B60F6B47203E572C0068992D /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
+		B60F6B49203E5A440068992D /* WishCardPageProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WishCardPageProtocol.h; sourceTree = "<group>"; };
 		B6E47B32202A93BC00125459 /* CardPageDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardPageDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6E47B35202A93BC00125459 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B6E47B36202A93BC00125459 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -62,8 +66,8 @@
 		B6E47B5B202A93BD00125459 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6E47B68202A948000125459 /* CardPageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardPageViewController.h; sourceTree = "<group>"; };
 		B6E47B69202A948000125459 /* CardPageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardPageViewController.m; sourceTree = "<group>"; };
-		B6E47B6B202A9AE600125459 /* ItemViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemViewController.h; sourceTree = "<group>"; };
-		B6E47B6C202A9AE600125459 /* ItemViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItemViewController.m; sourceTree = "<group>"; };
+		B6E47B6B202A9AE600125459 /* CardPageItemVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardPageItemVC.h; sourceTree = "<group>"; };
+		B6E47B6C202A9AE600125459 /* CardPageItemVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardPageItemVC.m; sourceTree = "<group>"; };
 		BB40DEEA02D409D0145B22E2 /* libPods-CardPageDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CardPageDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1928EE6233F8F021798B46D /* Pods-CardPageDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardPageDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo.release.xcconfig"; sourceTree = "<group>"; };
 		F4164675EDA63E1D13F2D6EB /* Pods-CardPageDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardPageDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CardPageDemo/Pods-CardPageDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -143,6 +147,8 @@
 				B6E47B39202A93BC00125459 /* ViewController.m */,
 				B60F6B4020316CB20068992D /* TestView.h */,
 				B60F6B4120316CB20068992D /* TestView.m */,
+				B60F6B46203E572C0068992D /* TestViewController.h */,
+				B60F6B47203E572C0068992D /* TestViewController.m */,
 				B6E47B67202A93E600125459 /* CardPage */,
 				B6E47B3B202A93BC00125459 /* Main.storyboard */,
 				B6E47B3E202A93BC00125459 /* Assets.xcassets */,
@@ -178,8 +184,9 @@
 				B6E47B69202A948000125459 /* CardPageViewController.m */,
 				B60F6B4320316DA80068992D /* CardPageVCView.h */,
 				B60F6B4420316DA80068992D /* CardPageVCView.m */,
-				B6E47B6B202A9AE600125459 /* ItemViewController.h */,
-				B6E47B6C202A9AE600125459 /* ItemViewController.m */,
+				B6E47B6B202A9AE600125459 /* CardPageItemVC.h */,
+				B6E47B6C202A9AE600125459 /* CardPageItemVC.m */,
+				B60F6B49203E5A440068992D /* WishCardPageProtocol.h */,
 			);
 			path = CardPage;
 			sourceTree = "<group>";
@@ -374,9 +381,10 @@
 				B6E47B3A202A93BC00125459 /* ViewController.m in Sources */,
 				B6E47B6A202A948000125459 /* CardPageViewController.m in Sources */,
 				B60F6B4520316DA80068992D /* CardPageVCView.m in Sources */,
-				B6E47B6D202A9AE600125459 /* ItemViewController.m in Sources */,
+				B6E47B6D202A9AE600125459 /* CardPageItemVC.m in Sources */,
 				B6E47B45202A93BC00125459 /* main.m in Sources */,
 				B60F6B4220316CB20068992D /* TestView.m in Sources */,
+				B60F6B48203E572C0068992D /* TestViewController.m in Sources */,
 				B6E47B37202A93BC00125459 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

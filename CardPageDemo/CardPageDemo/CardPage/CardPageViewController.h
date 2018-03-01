@@ -12,7 +12,6 @@
 
 @interface CardPageViewController : UIViewController
 
-@property (nonatomic, assign) CGRect startFrame;
 
 @end
 

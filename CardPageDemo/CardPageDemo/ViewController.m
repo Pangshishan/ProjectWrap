@@ -25,7 +25,6 @@
 {
     CardPageViewController *vc = [[CardPageViewController alloc] init];
     vc.view.frame = self.view.bounds;
-    vc.startFrame = vc.self.view.bounds;
     [self.view addSubview:vc.view];
     [self addChildViewController:vc];
 }

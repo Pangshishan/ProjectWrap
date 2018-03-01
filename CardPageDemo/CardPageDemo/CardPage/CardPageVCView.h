@@ -7,13 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@protocol CardPageVCHitDelegate <NSObject>
-
-- (BOOL)needRewriteHitTest;
-- (UIView *)view_hitTest:(CGPoint)point withEvent:(UIEvent *)event;
-
-@end
+#import "WishCardPageProtocol.h"
 
 @interface CardPageVCView : UIView
 

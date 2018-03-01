@@ -1,5 +1,5 @@
 //
-//  ItemViewController.h
+//  CardPageItemVC.h
 //  CardPageDemo
 //
 //  Created by pangshishan on 2018/2/7.
@@ -7,22 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WishCardPageProtocol.h"
 
-@class ItemViewController;
-@protocol ItemViewControllerProtocol <NSObject>
+@interface CardPageItemVC : UIViewController
 
-- (void)itemVC:(ItemViewController *)itemVC didChangeState:(BOOL)isTop;
-
-@end
-
-@interface ItemViewController : UIViewController
-
-@property (nonatomic, weak) id<ItemViewControllerProtocol> delegate;
+@property (nonatomic, weak) id<WishCardPageProtocol> delegate;
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, assign) NSInteger index;
 
 - (void)reloadWithData:(NSDictionary *)data index:(NSInteger)index;
+
+// 暂时未用到
 - (void)frameChanged;
 
 @end

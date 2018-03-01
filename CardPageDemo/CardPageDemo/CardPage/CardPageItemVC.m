@@ -1,15 +1,15 @@
 //
-//  ItemViewController.m
+//  CardPageItemVC.m
 //  CardPageDemo
 //
 //  Created by pangshishan on 2018/2/7.
 //  Copyright © 2018年 pangshishan. All rights reserved.
 //
 
-#import "ItemViewController.h"
+#import "CardPageItemVC.h"
 #import <Masonry.h>
 
-@interface ItemViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface CardPageItemVC () <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UILabel *label;
 
@@ -17,7 +17,7 @@
 
 @end
 
-@implementation ItemViewController
+@implementation CardPageItemVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];

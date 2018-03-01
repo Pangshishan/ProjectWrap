@@ -7,7 +7,7 @@
 //
 
 #import "CardPageViewController.h"
-#import "ItemViewController.h"
+#import "CardPageItemVC.h"
 #import "CardPageVCView.h"
 
 typedef enum : NSUInteger {
@@ -27,7 +27,9 @@ typedef enum : NSUInteger {
     CardStateFullScreen,
 } CardState;
 
-@interface CardPageViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, CardPageVCHitDelegate, ItemViewControllerProtocol>
+@interface CardPageViewController () <UIScrollViewDelegate, UIGestureRecognizerDelegate, CardPageVCHitDelegate, WishCardPageProtocol>
+
+@property (nonatomic, assign) CGRect startFrame;
 
 @property (nonatomic, assign) CGPoint startPoint;
 
@@ -76,7 +78,7 @@ typedef enum : NSUInteger {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
-    
+    self.startFrame = self.view.frame;
     [self setupPanGesture];
     [self addScrollView];
     [self setPanGesturePrior];
@@ -136,10 +138,11 @@ typedef enum : NSUInteger {
 
     self.itemVCArray = [NSMutableArray array];
     for (int i = 0; i < count; i++) {
-        ItemViewController *itemVC = [[ItemViewController alloc] init];
+        CardPageItemVC *itemVC = [[CardPageItemVC alloc] init];
         itemVC.delegate = self;
         [self addChildViewController:itemVC];
-        [scrollV addSubview:itemVC.view];
+        // [scrollV addSubview:itemVC.view];
+        [scrollV insertSubview:itemVC.view atIndex:0];
         itemVC.view.frame = CGRectMake(x + i * (minWid + margin), y, minWid, minHei);
         [self.itemVCArray addObject:itemVC];
         [itemVC reloadWithData:nil index:i];
@@ -150,7 +153,7 @@ typedef enum : NSUInteger {
 - (void)setPanGesturePrior
 {
     for (int i = 0; i < self.itemVCArray.count; i++) {
-        ItemViewController *itemVC = self.itemVCArray[i];
+        CardPageItemVC *itemVC = self.itemVCArray[i];
         [itemVC.tableView.panGestureRecognizer requireGestureRecognizerToFail:self.panGesture];
     }
 }
@@ -158,7 +161,7 @@ typedef enum : NSUInteger {
 - (void)setItemsVCPrior
 {
     for (int i = 0; i < self.itemVCArray.count; i++) {
-        ItemViewController *itemVC = self.itemVCArray[i];
+        CardPageItemVC *itemVC = self.itemVCArray[i];
         [self.panGesture requireGestureRecognizerToFail:itemVC.tableView.panGestureRecognizer];
     }
 }
@@ -188,7 +191,7 @@ typedef enum : NSUInteger {
         }
         if (self.cardState == CardStateFullScreen) {
             if (self.dragDirection == DraggingDirectionDown) {
-//                ItemViewController *itemVC = [self vcWithCurrentIndex];
+//                CardPageItemVC *itemVC = [self vcWithCurrentIndex];
 //                itemVC.tableView.conten
                 [self downGesture:panGes];
             } else if (self.dragDirection == DraggingDirectionUp) {
@@ -253,22 +256,22 @@ typedef enum : NSUInteger {
         CGPoint point = [panGes locationInView:self.view];
         if (point.y > self.startPoint.y) { // 超出底部
             self.panHeight = 0;
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
             self.cardState = CardStateNormal;
         } else if (point.y < self.startPoint.y - self.varHei) { // 超出顶部
             self.panHeight = self.varHei;
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
             self.cardState = CardStateFullScreen;
         } else { // 正常缩放
             self.panHeight = self.startPoint.y - point.y;
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
         }
     } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
         panGes.enabled = YES;
-        ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+        CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
         itemVC.tableView.contentOffset = CGPointMake(0, 0);
         if (self.panHeight > self.varHei / 2) {
             [UIView animateWithDuration:0.1 animations:^{
@@ -292,22 +295,22 @@ typedef enum : NSUInteger {
         CGPoint point = [panGes locationInView:self.view];
         if (point.y < self.startPoint.y) { // 超出顶部
             self.panHeight = self.varHei;
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
             self.cardState = CardStateFullScreen;
         } else if (point.y > self.startPoint.y + self.varHei) { // 超出底部
             self.panHeight = 0;
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
             self.cardState = CardStateNormal;
         } else { // 正常缩放
             self.panHeight = self.varHei - (point.y - self.startPoint.y);
-            ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+            CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
             itemVC.view.frame = [self frameInDragging];
         }
     } else if (panGes.state == UIGestureRecognizerStateEnded || panGes.state == UIGestureRecognizerStateCancelled) {
         panGes.enabled = YES;
-        ItemViewController *itemVC = (ItemViewController *)[self vcWithCurrentIndex];
+        CardPageItemVC *itemVC = (CardPageItemVC *)[self vcWithCurrentIndex];
         itemVC.tableView.contentOffset = CGPointMake(0, 0);
         if (self.panHeight > self.varHei / 2) {
             [UIView animateWithDuration:0.1 animations:^{
@@ -356,8 +359,8 @@ typedef enum : NSUInteger {
     return YES;
 }
 
-#pragma mark - ItemViewController Delegate
-- (void)itemVC:(ItemViewController *)itemVC didChangeState:(BOOL)isTop
+#pragma mark - CardPageItemVC Delegate
+- (void)itemVC:(CardPageItemVC *)itemVC didChangeState:(BOOL)isTop
 {
     NSLog(@"%d", isTop);
     self.isTop = isTop;
@@ -410,25 +413,27 @@ typedef enum : NSUInteger {
         directionType = PageDirectionNoChange;
     }
     (*targetContentOffset).x = scrollView.contentOffset.x;
-    NSLog(@"第 %ld 页", self.pageIndex);
+    
+    // 当前页放在最前面
+    UIViewController *currentVC = [self vcWithCurrentIndex];
+    [self.scrollView bringSubviewToFront:currentVC.view];
+    
+    //NSLog(@"第 %ld 页", self.pageIndex);
     if (directionType == PageDirectionNext) {
         if (self.pageIndex == 1 || self.pageIndex == self.count - 1) {
             return;
         }
-        ItemViewController *vc = self.itemVCArray[[self farthestIndexWithLeft:YES]];
+        CardPageItemVC *vc = self.itemVCArray[[self farthestIndexWithLeft:YES]];
         vc.view.frame = CGRectMake(self.edgeW + (self.pageIndex + 1) * (self.minWid + self.margin), self.minY, self.minWid, self.minHei);
         [vc reloadWithData:nil index:self.pageIndex + 1];
     } else if (directionType == PageDirectionLast) {
         if (self.pageIndex == self.count - 2 || self.pageIndex == 0) {
             return;
         }
-        ItemViewController *vc = self.itemVCArray[[self farthestIndexWithLeft:NO]];
+        CardPageItemVC *vc = self.itemVCArray[[self farthestIndexWithLeft:NO]];
         vc.view.frame = CGRectMake(self.edgeW + (self.pageIndex - 1) * (self.minWid + self.margin), self.minY, self.minWid, self.minHei);
         [vc reloadWithData:nil index:self.pageIndex - 1];
     }
-    // 当前页放在最前面
-    UIViewController *currentVC = [self vcWithCurrentIndex];
-    [self.scrollView bringSubviewToFront:currentVC.view];
 }
 #pragma mark - private
 - (NSInteger)farthestIndexWithLeft:(BOOL)isLeft
@@ -470,7 +475,7 @@ typedef enum : NSUInteger {
 - (UIViewController *)vcWithCurrentIndex
 {
     for (int i = 0 ; i < self.itemVCArray.count; i++) {
-        ItemViewController *itemVC = self.itemVCArray[i];
+        CardPageItemVC *itemVC = self.itemVCArray[i];
         if (itemVC.index == self.pageIndex) {
             return itemVC;
         }
